@@ -14,30 +14,21 @@ if ($conn->connect_error) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
-    $password_salt = $_POST['password_salt'];
+    $password = $_POST['password'];
+    $username = $_POST['username'];
 
-    // 비밀번호 해싱 및 솔트 검색
-    $sql = "SELECT * FROM users WHERE email = ?";
+    // 암호화된 비밀번호 생성
+    $password_salt = bin2hex(random_bytes(32)); // 새로운 솔트 생성
+    $password_hash = hash('sha256', $password_salt . $password); // 비밀번호 해싱
+
+    // 데이터베이스에 사용자 정보 삽입
+    $sql = "INSERT INTO users (email, password_salt, password_hash) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $email);
+    $stmt->bind_param("sss", $username, $email, $password_salt, $password_hash);
     $stmt->execute();
-    $result = $stmt->get_result();
 
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-        $stored_password_salt = $user['password_salt'];
-
-        // 사용자가 제출한 비밀번호를 검증
-        if (password_verify($password_salt, $stored_password_salt)) {
-            // 로그인 성공
-            header("Location: ../main.html");
-        } else {
-            // 로그인 실패
-            $status = "Incorrect";
-        }
-    } else {
-        // 사용자가 존재하지 않음
-        $status = "User not found";
-    }
+    // 회원가입 성공 메시지 반환
+    echo json_encode(array("message" => "회원가입이 완료되었습니다."));
+    header("Location: ../main.html");
 }
 ?>
