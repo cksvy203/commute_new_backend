@@ -14,9 +14,9 @@ if ($conn->connect_error) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
-    $password = $_POST['password'];
+    $password_salt = $_POST['password_salt'];
 
-    // 데이터베이스에서 사용자 정보 확인
+    // 비밀번호 해싱 및 솔트 검색
     $sql = "SELECT * FROM users WHERE email = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $email);
@@ -25,13 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
-        $encrypted_password = $user['encrypted_password'];
+        $stored_password_salt = $user['password_salt'];
 
-        // 사용자가 제출한 비밀번호를 해싱 (SHA-256)
-        $submitted_password = hash('sha256', $password);
-
-        // 비밀번호 검증
-        if ($encrypted_password === encryptAES($submitted_password, $encryption_key)) {
+        // 사용자가 제출한 비밀번호를 검증
+        if (password_verify($password_salt, $stored_password_salt)) {
             // 로그인 성공
             header("Location: ../main.html");
         } else {
@@ -43,12 +40,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $status = "User not found";
     }
 }
-
-// AES 암호화 함수
-function encryptAES($data, $key) {
-    $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
-    $encrypted = openssl_encrypt($data, 'aes-256-cbc', $key, 0, $iv);
-    return base64_encode($iv . $encrypted);
-}
 ?>
-
