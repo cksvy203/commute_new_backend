@@ -1,0 +1,68 @@
+body 
+{
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.h1 
+{
+  color: rgba(0, 0, 0, 0.80);
+  font-family: Poppins;
+  font-size: 35px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  text-align: center;
+  margin-top: 20px; /* 최상단에 위치하도록 수정 */
+}
+
+  
+  .container  
+  {
+    max-width: 300px;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  
+  .input-container 
+  {
+    margin-bottom: 20px;
+  }
+
+  #input1, #input2, #input3, #input4
+  {
+    width: 100%;
+    height: 48px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.40);
+    background: rgba(255, 255, 255, 0.08);
+    margin-bottom: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    input:focus {outline: none;}
+  }
+
+  #button
+  {
+  color: aliceblue;
+  font-size: 18px;
+  width: 100%;
+  height: 48px;
+  font-family: bold;
+  border-radius: 7px;
+  background: #E96B56;
+  margin-bottom: 15px; /* 버튼 밑에 여백 추가 */
+  font-weight: bold;
+  border: none;
+  }
+ 
+#button:hover
+{
+  background-color: #ffa07a; /* 버튼 위에 마우스 호버 시 배경색 변경 */
+}
